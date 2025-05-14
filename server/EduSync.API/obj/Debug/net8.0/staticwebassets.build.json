@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "4iFy3RsPwPSEsszw9biNV5EJZOTWTgqOXj6dLupwiKU=",
+  "Source": "EduSync.API",
+  "BasePath": "_content/EduSync.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

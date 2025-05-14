@@ -1,54 +1,65 @@
-using EduSync.API.Models;
-using EduSync.API.Data;
 using Microsoft.AspNetCore.Mvc;
+using EduSync.API.Models;
+using EduSync.API.Services;
 
-namespace EduSync.API.Controllers
+namespace EduSync.API.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly AuthService _authService;
 
-        public AuthController(ApplicationDbContext context)
+        public AuthController(AuthService authService)
         {
-            _context = context;
+            _authService = authService;
         }
 
         [HttpPost("register")]
-        public IActionResult Register(RegisterRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            if (_context.Users.Any(u => u.Email == request.Email))
-                return BadRequest("User already exists.");
-
             var user = new User
             {
                 FullName = request.FullName,
                 Email = request.Email,
-                Password = request.Password,
                 Role = request.Role
             };
 
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            var (success, message) = await _authService.RegisterUser(user, request.Password);
 
-            return Ok(new { message = "User registered successfully." });
+            if (!success)
+            {
+                return BadRequest(new { message });
+            }
+
+            return Ok(new { message });
         }
 
         [HttpPost("login")]
-        public IActionResult Login(LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var user = _context.Users.FirstOrDefault(u =>
-                u.Email == request.Email && u.Password == request.Password);
+            var (success, token, message) = await _authService.Login(request.Email, request.Password);
 
-            if (user == null)
-                return Unauthorized("Invalid credentials");
-
-            return Ok(new
+            if (!success)
             {
-                token = $"fake-jwt-token-for-{user.Email}",
-                user = new { user.Id, user.FullName, user.Email, user.Role }
-            });
+                return BadRequest(new { message });
+            }
+
+            return Ok(new { token, message });
         }
     }
-}
+
+    public class RegisterRequest
+    {
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string Role { get; set; } = "Student";
+    }
+
+    public class LoginRequest
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+} 

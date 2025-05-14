@@ -6,7 +6,9 @@ namespace EduSync.API.Data
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options) { }
+            : base(options)
+        {
+        }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Course> Courses { get; set; }
@@ -17,7 +19,14 @@ namespace EduSync.API.Data
         public DbSet<Assessment> Assessments { get; set; }
         public DbSet<Result> Results { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-
+            // Add unique constraint on email
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+        }
     }
 }

@@ -8,15 +8,21 @@ namespace EduSync.API.Models
         public int Id { get; set; }
 
         [Required]
-        public string FullName { get; set; } = "";
+        [StringLength(100)]
+        public string FullName { get; set; } = string.Empty;
 
         [Required]
-        public string Email { get; set; } = "";
+        [EmailAddress]
+        [StringLength(100)]
+        public string Email { get; set; } = string.Empty;
 
         [Required]
-        public string Password { get; set; } = "";
+        public string PasswordHash { get; set; } = string.Empty;
 
         [Required]
+        [StringLength(20)]
         public string Role { get; set; } = "Student";
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
