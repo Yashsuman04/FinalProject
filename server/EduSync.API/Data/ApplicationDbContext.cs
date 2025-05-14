@@ -9,5 +9,15 @@ namespace EduSync.API.Data
             : base(options) { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Course> Courses { get; set; }
+
+        public DbSet<Enrollment> Enrollments { get; set; }
+        public DbSet<Progress> Progresses { get; set; }
+
+        public DbSet<Assessment> Assessments { get; set; }
+        public DbSet<Result> Results { get; set; }
+
+
+
     }
 }
